@@ -54,10 +54,18 @@ def calculate_shares(x_value, coefficients, field_base, secret):
 
 
 def convert_dec_to_hex(dec):
+    '''
+    :param dec: decimal value
+    :return: return the corresponding hex value of the dec
+    '''
     return hex(dec).split('x')[-1]
 
 
 def convert_dec_array_to_hex_array(decs):
+    '''
+    :param decs: list of decimal values
+    :return: list of hex values
+    '''
     result = []
     for dec in decs:
         hex_v = convert_dec_to_hex(dec)
@@ -68,20 +76,32 @@ def convert_dec_array_to_hex_array(decs):
 
 
 def encrypt_char(x_values, secret, intercept, degree, field_base=8):
+    '''
+    :param x_values: list of x_values. eg. x_values = [145, 51, 167, 212, 64, 42, 127, 96, 236, 52]
+    :param secret: a character. eg. 's'
+    :param intercept: how many shares we want to generate. eg. n = 10
+    :param degree: degree of the polynomial. eg. k-1 = 2
+    :param field_base: base of the field. eg. field_base = 8
+    :return: array of hex values of corresponding y values
+    '''
     coefficients = random_polynomials_coeff(degree, field_base)
     y_results = []
     for i in range(intercept):
         y_result = calculate_shares(x_values[i], coefficients, field_base, secret)
         y_results.append(y_result)
-    # print("secret:", secret, "; and y_results:", y_results)
     y_hexs = convert_dec_array_to_hex_array(y_results)
-    # print("y_hexs:", y_hexs)
     return y_hexs
 
 
 def encrypt_string(secret_str, intercept, degree, field_base=8):
+    '''
+    :param secret_str: string secret. eg. 'this is secret'
+    :param intercept: number of shares we want to generate. eg. n = 10
+    :param degree: degree of the polynomial. eg. degree = 2 = k-1
+    :param field_base: 9
+    :return: return the shares.
+    '''
     x_values = random_x_values(intercept, field_base)
-    # print("x_values:", x_values)
     y_shares = []
     for i in range(intercept):
         y_shares.append('')
