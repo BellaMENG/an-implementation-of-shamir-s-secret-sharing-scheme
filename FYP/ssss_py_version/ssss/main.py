@@ -1,9 +1,10 @@
 from split import encrypt_string
-
+import getpass
+from interpolation import reconstruct_secret
 
 if __name__ == "__main__":
-    print("Please input the secret:")
-    secret = input()
+    # print("Please input the secret:")
+    secret = getpass.getpass('Secret:')
     print("Please input the field base for finite field:")
     field_base = int(input())
     print("How many shares do you want:")
@@ -16,5 +17,16 @@ if __name__ == "__main__":
     print("The shares are:")
     for share in shares:
         print(share)
+
+    new_shares = []
+    print("Now we need", degree+1, "shares to reconstruct the original secret.")
+    for i in range(degree+1):
+        print("Please input share " + str(i+1) + ":")
+        new_shares.append(input())
+
+    secret = reconstruct_secret(shares, degree, field_base)
+    print("The original secret is:")
+    print(secret)
+
 
 
