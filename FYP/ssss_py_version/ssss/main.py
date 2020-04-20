@@ -2,6 +2,8 @@ from split import encrypt_string
 import getpass
 from interpolation import reconstruct_secret
 
+
+# remember to check the inputs
 if __name__ == "__main__":
     # print("Please input the secret:")
     secret = getpass.getpass('Secret(Not visible on the console):')
@@ -27,6 +29,3 @@ if __name__ == "__main__":
     secret = reconstruct_secret(shares, degree, field_base)
     print("The original secret is:")
     print(secret)
-
-
-
