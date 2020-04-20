@@ -2,6 +2,10 @@ from pyfinite import ffield
 
 
 def convert_hex_to_dec_array(hex_array):
+    '''
+    :param hex_array: array of hexadecimal values
+    :return: the corresponding of decimal values
+    '''
     dec_array = []
     for hex_v in hex_array:
         dec_array.append(int(hex_v, 16))
@@ -43,11 +47,16 @@ def get_points(shares):
         y_dec = convert_hex_to_dec_array(y_value)
         xy_values.append(y_dec)
 
-    # print(xy_values)
     return xy_values
 
 
 def lagrange_interpolation(points, field_base=8, x0=0):
+    '''
+    :param points: a list of two lists. the first list element is the list of x values, the second list element is the list of y values
+    :param field_base: base of the field. usually 8
+    :param x0: f(x0) is the secret. We set x0 to be 0
+    :return: s0, which is also the constant term of the polynomial
+    '''
     x_values, y_values = points
     F = ffield.FField(field_base)
     f_x = 0
@@ -66,6 +75,12 @@ def lagrange_interpolation(points, field_base=8, x0=0):
 
 
 def reconstruct_secret(shares, degree, field_base=8):
+    '''
+    :param shares: shares. eg. shares = ['52-4cb1787cc758426bc82aebb44050', 'e1-31770e32acb4091ca4e43c000316', 'e2-078f51a8d8e4f2f2b2b00529de62']
+    :param degree: the degree of the polynomial
+    :param field_base: usually 8
+    :return: return the original secret in string
+    '''
     if len(shares) <= degree:
         raise ValueError("The number of shares must be ")
     xy_value = get_points(shares)
