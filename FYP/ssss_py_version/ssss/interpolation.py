@@ -13,13 +13,14 @@ def convert_hex_to_dec_array(hex_array):
     return dec_array
 
 
-def get_points(shares):
+def get_points(shares, field_base=8):
     '''
     :param shares: a list of shares. before '-', it is the hex value of x's; after '-', hex values of y's concatenated to one string
     so we determine the number of characters in the original secret by the length of the string after '-'
     :return: return a list of list. xy_values[0] contains all the integer value of the x_i's
     the following lists contains y_values of each character in the secret, following the order
     '''
+    len_of_hex = int(field_base / 4)
     x_hex = []
     y_shares = []
     length = 0
@@ -28,16 +29,16 @@ def get_points(shares):
         x_hex.append(x)
         y_shares.append(y)
         if i == 0:
-            length = int(len(y)/2)
+            length = int(len(y)/len_of_hex)
 
     num_n = len(x_hex)
     x_values = convert_hex_to_dec_array(x_hex)
-    # print(x_values)
     y_values_list = []
     for i in range(length):
         y_hexs = []
         for j in range(num_n):
-            y_hex = y_shares[j][2*i] + y_shares[j][2*i+1]
+            # TODO: change 2 to a number according to field_base
+            y_hex = y_shares[j][len_of_hex*i: len_of_hex*i+len_of_hex]
             y_hexs.append(y_hex)
 
         y_values_list.append(y_hexs)
@@ -83,7 +84,7 @@ def reconstruct_secret(shares, degree, field_base=8):
     '''
     if len(shares) <= degree:
         raise ValueError("The number of shares must be ")
-    xy_value = get_points(shares)
+    xy_value = get_points(shares, field_base)
     x_values = xy_value[0]
     secret = ''
     for i in range(1, len(xy_value)):
