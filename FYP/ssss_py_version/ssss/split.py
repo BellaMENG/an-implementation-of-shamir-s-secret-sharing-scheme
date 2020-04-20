@@ -3,7 +3,7 @@ from pyfinite import ffield
 # we can utilize pyfinite package
 #TODO: get input from keyboard/download shares
 
-def random_polynomials_coeff(degree, field_base):
+def random_polynomials_coeff(degree, field_base=8):
     '''
     :param degree: degree of the parameter, which is k-1
     :param field_base: the base of the finite field
@@ -19,7 +19,7 @@ def random_polynomials_coeff(degree, field_base):
     return coefficients
 
 
-def random_x_values(intercept, field_base):
+def random_x_values(intercept, field_base=8):
     '''
     :param intercept: number of shares, n
     :param field_base: the base of finite field
@@ -35,7 +35,7 @@ def random_x_values(intercept, field_base):
     return x_values
 
 
-def calculate_shares(x_value, coefficients, field_base, secret):
+def calculate_shares(x_value, coefficients, secret, field_base=8):
     '''
     :param x_value: the x value
     :param coefficients: coefficients of the polynomial, coefficient[i] is the coefficient of x^(i+1)
@@ -61,7 +61,7 @@ def convert_dec_to_hex(dec):
     return hex(dec).split('x')[-1]
 
 
-def convert_dec_array_to_hex_array(decs):
+def convert_dec_array_to_hex_array(decs, field_base=8):
     '''
     :param decs: list of decimal values
     :return: list of hex values
@@ -69,8 +69,9 @@ def convert_dec_array_to_hex_array(decs):
     result = []
     for dec in decs:
         hex_v = convert_dec_to_hex(dec)
-        if len(hex_v) == 1:
-            hex_v = '0' + hex_v
+        length = len(hex_v)
+        if length < field_base/4:
+            hex_v = (int(field_base/4)-length)*'0' + hex_v
         result.append(hex_v)
     return result
 
@@ -87,9 +88,9 @@ def encrypt_char(x_values, secret, intercept, degree, field_base=8):
     coefficients = random_polynomials_coeff(degree, field_base)
     y_results = []
     for i in range(intercept):
-        y_result = calculate_shares(x_values[i], coefficients, field_base, secret)
+        y_result = calculate_shares(x_values[i], coefficients, secret, field_base)
         y_results.append(y_result)
-    y_hexs = convert_dec_array_to_hex_array(y_results)
+    y_hexs = convert_dec_array_to_hex_array(y_results, field_base)
     return y_hexs
 
 
