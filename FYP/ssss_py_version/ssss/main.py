@@ -3,7 +3,14 @@ import getpass
 from interpolation import reconstruct_secret
 
 
-# remember to check the inputs
+# TODO:check the inputs
+# field_base, k, n should all be integers
+# k <= n (do we equal or not?)
+# k != 1
+# field_base should be multiple of 8
+# security restrictions, for example, n or k cannot be too small
+
+
 if __name__ == "__main__":
     # print("Please input the secret:")
     secret = getpass.getpass('Secret(Not visible on the console):')
