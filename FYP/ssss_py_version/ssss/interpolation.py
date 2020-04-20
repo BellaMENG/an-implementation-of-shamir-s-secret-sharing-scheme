@@ -95,25 +95,6 @@ def reconstruct_secret(shares, degree, field_base=8):
     return secret
 
 
-'''
-x_values: [170, 0, 121, 213, 109, 252, 117, 15, 118, 112]
-secret: 2 ; and y_results: [231, 50, 89, 227, 91, 69, 70, 33, 74, 37]
-secret: 3 ; and y_results: [244, 51, 148, 193, 210, 117, 124, 37, 130, 16]
-y_shares: ['aa-e7f4', '00-3233', '79-5994', 'd5-e3c1', '6d-5bd2', 'fc-4575', '75-467c', '0f-2125', '76-4a82', '70-2510']
-'''
-'''
-shares = ['52-4cb1787cc758426bc82aebb44050', 'e1-31770e32acb4091ca4e43c000316', 'e2-078f51a8d8e4f2f2b2b00529de62',
-          '3d-adc0e36c837091a03687dbc7afa7', 'a3-bd2ffde3f390d32cbaab5f9b49e7', 'b1-976f0bc0ff3e82d17b22498b617e',
-          '37-162c0bd022e9838743a75c4710dc', '97-e993c0da8540d8659c3d5987e13b', '9c-fa466301e4328b2a9bc01a63c478',
-          '16-1441857bfd71ab89405b2fd66685']
-shares for 'this is secret'
-'''
-'''
-shares = ['7a-c5032b508d42', 'e0-bc0400d54d36', '95-0c2f931d6bd3', 
-            '2f-ac4569a98f19', '12-3c865bcd615f', 'e5-709d46d2b8e2', 
-                'bc-349202152469', 'f6-ce34a32bea79', 'f4-147aa3b9ecca', 'c2-bf27d1766f3b']
-shares for 'seCrEt'
-'''
 if __name__ == "__main__":
     field_base = 8
     x0 = 0

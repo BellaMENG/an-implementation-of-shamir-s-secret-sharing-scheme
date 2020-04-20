@@ -92,8 +92,3 @@ if __name__ == "__main__":
     print("shares_f:", y_shares_f)
     print("shares_g:", y_shares_g)
 
-    
-    
-
-    
-    
