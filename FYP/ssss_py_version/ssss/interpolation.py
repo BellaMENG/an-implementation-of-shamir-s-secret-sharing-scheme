@@ -65,7 +65,7 @@ def lagrange_interpolation(points, field_base=8, x0=0):
     return chr(f_x)
 
 
-def reconstruct_secret(shares, degree):
+def reconstruct_secret(shares, degree, field_base=8):
     if len(shares) <= degree:
         raise ValueError("The number of shares must be ")
     xy_value = get_points(shares)
@@ -73,7 +73,7 @@ def reconstruct_secret(shares, degree):
     secret = ''
     for i in range(1, len(xy_value)):
         y_values = xy_value[i]
-        s = lagrange_interpolation([x_values, y_values], field_base, x0)
+        s = lagrange_interpolation([x_values, y_values], field_base, 0)
         secret += s
 
     return secret
@@ -108,5 +108,5 @@ if __name__ == "__main__":
         print("Please input share " + str(i+1) + ": ")
         shares.append(input())
 
-    secret = reconstruct_secret(shares, degree)
+    secret = reconstruct_secret(shares, degree, field_base)
     print("The secret is:", secret)
