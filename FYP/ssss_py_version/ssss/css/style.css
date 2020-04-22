@@ -1,0 +1,27 @@
+body {
+  /*background-color: rgb(229,207,255);*/
+  font-family: myriad-pro, sans-serif;
+  font-style: normal;
+  font-weight: 300;
+  text-align: center;
+}
+
+/*
+p{
+  color: rgb(177, 99, 163);
+}
+
+
+h1 {
+  color: rgb(166, 94, 126);
+}
+
+hr.style_one {
+  height:8px;
+  border: 2px dashed #999;
+}
+*/
+
+input[type=number] {
+  width : 30%;
+}

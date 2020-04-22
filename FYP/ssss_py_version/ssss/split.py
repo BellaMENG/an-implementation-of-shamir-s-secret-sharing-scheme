@@ -4,11 +4,11 @@ from pyfinite import ffield
 #TODO: get input from keyboard/download shares
 
 def random_polynomials_coeff(degree, field_base=8):
-    '''
+    """
     :param degree: degree of the parameter, which is k-1
     :param field_base: the base of the finite field
     :return: return the coefficients
-    '''
+    """
     if degree < 0:
         raise ValueError("Degree cannot be a negative number.")
     coefficients = []
@@ -20,11 +20,11 @@ def random_polynomials_coeff(degree, field_base=8):
 
 
 def random_x_values(intercept, field_base=8):
-    '''
+    """
     :param intercept: number of shares, n
     :param field_base: the base of finite field
     :return: n X_i's we need
-    '''
+    """
     upper_bound = 2**field_base - 1
     x_values = []
     for i in range(intercept):
@@ -36,13 +36,13 @@ def random_x_values(intercept, field_base=8):
 
 
 def calculate_shares(x_value, coefficients, secret, field_base=8):
-    '''
+    """
     :param x_value: the x value
     :param coefficients: coefficients of the polynomial, coefficient[i] is the coefficient of x^(i+1)
     :param field_base: field base
     :param secret: the character secret
     :return: return the y value correspond to the x value
-    '''
+    """
     F = ffield.FField(field_base)
     s0 = ord(secret)
     result = 0
@@ -54,18 +54,18 @@ def calculate_shares(x_value, coefficients, secret, field_base=8):
 
 
 def convert_dec_to_hex(dec):
-    '''
+    """
     :param dec: decimal value
     :return: return the corresponding hex value of the dec
-    '''
+    """
     return hex(dec).split('x')[-1]
 
 
 def convert_dec_array_to_hex_array(decs, field_base=8):
-    '''
+    """
     :param decs: list of decimal values
     :return: list of hex values
-    '''
+    """
     result = []
     for dec in decs:
         hex_v = convert_dec_to_hex(dec)
@@ -77,14 +77,14 @@ def convert_dec_array_to_hex_array(decs, field_base=8):
 
 
 def encrypt_char(x_values, secret, intercept, degree, field_base=8):
-    '''
+    """
     :param x_values: list of x_values. eg. x_values = [145, 51, 167, 212, 64, 42, 127, 96, 236, 52]
     :param secret: a character. eg. 's'
     :param intercept: how many shares we want to generate. eg. n = 10
     :param degree: degree of the polynomial. eg. k-1 = 2
     :param field_base: base of the field. eg. field_base = 8
     :return: array of hex values of corresponding y values
-    '''
+    """
     coefficients = random_polynomials_coeff(degree, field_base)
     y_results = []
     for i in range(intercept):
@@ -95,13 +95,22 @@ def encrypt_char(x_values, secret, intercept, degree, field_base=8):
 
 
 def encrypt_string(secret_str, intercept, degree, field_base=8):
-    '''
+    """
     :param secret_str: string secret. eg. 'this is secret'
     :param intercept: number of shares we want to generate. eg. n = 10
     :param degree: degree of the polynomial. eg. degree = 2 = k-1
     :param field_base: 9
     :return: return the shares.
-    '''
+    """
+    if type(intercept) is str:
+        intercept = int(intercept)
+
+    if type(degree) is str:
+        degree = int(degree)
+
+    if type(field_base) is str:
+        field_base = int(field_base)
+
     x_values = random_x_values(intercept, field_base)
     y_shares = []
     for i in range(intercept):
@@ -117,6 +126,15 @@ def encrypt_string(secret_str, intercept, degree, field_base=8):
     return y_shares
 
 
+def encrypt_string_str(secret_str, intercept, degree, field_base=8):
+    shares = encrypt_string(secret_str, intercept, degree, field_base)
+    shares_str = ''
+    for share in shares:
+        shares_str += share + '\n'
+
+    return shares_str
+
+
 if __name__ == "__main__":
     secret = 'seCrEt'
     intercept = 10
@@ -125,4 +143,5 @@ if __name__ == "__main__":
 
 
     y_shares = encrypt_string(secret, intercept, degree, field_base)
+
     print("The shares are:", y_shares)

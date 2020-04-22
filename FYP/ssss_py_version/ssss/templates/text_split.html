@@ -1,0 +1,43 @@
+<!--try to extend text_secrets.html page-->
+{% extends "text_secrets.html" %}
+<html>
+    <body>
+        <p>
+            <b>Shares Generation</b>
+        </p>
+
+        <table summary="layout">
+            <tbody>
+            <tr>
+                <td aligh="right">Secret: </td>
+                <td>
+                    <input type="text" name="secret_string" id="secret_string" size="32" value="this is secret">
+                </td>
+            </tr>
+            <tr>
+                <td aligh="right">Number of Shares: </td>
+                <td>
+                    <input type="text" name="intercept" id="intercept" size="32" value="10">
+                </td>
+            </tr>
+            <tr>
+                <td aligh="right">Shares needed for reconstruct: </td>
+                <td>
+                    <input type="text" name="degree_add1" id="degree_add1" size="32" value="3">
+                </td>
+            </tr>
+            <tr>
+                <td aligh="right">Field base(multiple of 8): </td>
+                <td>
+                    <input type="text" name="field_base" id="field_base" size="32" value="3">
+                </td>
+            </tr>
+
+            </tbody>
+        </table>
+        <!--<input type = "button" onclick = split() value = "Split!" />-->
+        <!--<HR class="style_one" />-->
+        <a href="{{ url_for('text_split') }}">Split!</a> <br />
+        <a href="{{ url_for('index') }}">Back to Main Page</a>
+    </body>
+</html>

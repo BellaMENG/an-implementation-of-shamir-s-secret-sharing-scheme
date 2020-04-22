@@ -53,8 +53,8 @@ def encrypt_char_cheating(x_values, secret, intercept, degree, field_base=8):
     y_results_f = []
     y_results_g = []
     for i in range(intercept):
-        y_result_f = calculate_shares(x_values[i], f_coefficients, field_base, secret)
-        y_result_g = calculate_g_shares (x_values[i], g_coefficients, field_base)
+        y_result_f = calculate_shares(x_values[i], f_coefficients, secret, field_base)
+        y_result_g = calculate_g_shares(x_values[i], g_coefficients, field_base)
         y_results_f.append(y_result_f)
         y_results_g.append(y_result_g)
     y_hexs_f = convert_dec_array_to_hex_array(y_results_f)
