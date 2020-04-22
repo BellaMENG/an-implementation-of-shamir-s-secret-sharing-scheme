@@ -12,7 +12,6 @@ from interpolation import reconstruct_secret
 
 
 if __name__ == "__main__":
-    # print("Please input the secret:")
     secret = getpass.getpass('Secret(Not visible on the console):')
     print("Please input the field base for finite field:")
     field_base = int(input())
