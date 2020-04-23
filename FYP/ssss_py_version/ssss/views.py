@@ -1,6 +1,6 @@
 # print("You reached the test file.")
 
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
 from werkzeug.datastructures import ImmutableMultiDict
 from split import encrypt_string_str
 
@@ -24,7 +24,7 @@ def image_secrets():
     return render_template('image_secrets.html')
 
 
-@app.route('/split', methods=['GET','POST'])
+@app.route('/split', methods=['POST'])
 def text_split():
     if request.method == 'POST':
         secret = request.form.getlist('secret')[0]
@@ -33,9 +33,9 @@ def text_split():
         field_base = int(request.form.getlist('field_base')[0])
 
         shares = encrypt_string_str(secret, intercept, degree, field_base)
-        return shares
-    if request.method == 'GET':
-        return render_template('text_split.html')
+        return jsonify(shares)
+    # if request.method == 'GET':
+    #     return render_template('text_split.html')
     # return render_template('text_split.html')
 
 

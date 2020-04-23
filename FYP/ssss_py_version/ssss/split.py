@@ -129,8 +129,8 @@ def encrypt_string(secret_str, intercept, degree, field_base=8):
 def encrypt_string_str(secret_str, intercept, degree, field_base=8):
     shares = encrypt_string(secret_str, intercept, degree, field_base)
     shares_str = ''
-    for share in shares:
-        shares_str += share + '\n'
+    for i in range(len(shares)):
+        shares_str += shares[i] + '\n'
 
     return shares_str
 
@@ -142,6 +142,6 @@ if __name__ == "__main__":
     degree = 2
 
 
-    y_shares = encrypt_string(secret, intercept, degree, field_base)
+    y_shares = encrypt_string_str(secret, intercept, degree, field_base)
 
-    print("The shares are:", y_shares)
+    print(y_shares)
