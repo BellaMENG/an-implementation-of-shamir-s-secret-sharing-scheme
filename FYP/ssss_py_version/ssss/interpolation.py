@@ -25,6 +25,7 @@ def get_points(shares, field_base=8):
     y_shares = []
     length = 0
     for i in range(len(shares)):
+        print(shares[i])
         x, y = shares[i].split('-')
         x_hex.append(x)
         y_shares.append(y)
@@ -83,7 +84,7 @@ def reconstruct_secret(shares, degree, field_base=8):
     :return: return the original secret in string
     '''
     if len(shares) <= degree:
-        raise ValueError("The number of shares must be ")
+        raise ValueError("The number of shares must be "+str(degree+1))
     xy_value = get_points(shares, field_base)
     x_values = xy_value[0]
     secret = ''
