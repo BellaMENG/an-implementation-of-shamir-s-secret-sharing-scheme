@@ -3,6 +3,7 @@
 from flask import Flask, render_template, request, jsonify
 from werkzeug.datastructures import ImmutableMultiDict
 from split import encrypt_string_str
+from interpolation import reconstruct_secret
 
 
 app = Flask(__name__)
@@ -37,6 +38,16 @@ def text_split():
     # if request.method == 'GET':
     #     return render_template('text_split.html')
     # return render_template('text_split.html')
+
+
+@app.route('/combine', methods=['POST'])
+def text_combine():
+    degree = int(request.form.getlist('degree')[0]) - 1
+    field_base = int(request.form.getlist('field_base')[0])
+    shares = request.form.getlist('shares')[0].split('\n')
+    secret = reconstruct_secret(shares, degree, field_base)
+    print(secret)
+    return jsonify(secret)
 
 
 if __name__ == "__main__":
