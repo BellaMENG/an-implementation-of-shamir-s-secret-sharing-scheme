@@ -1,4 +1,5 @@
 from pyfinite import ffield
+import time
 
 
 def convert_hex_to_dec_array(hex_array):
@@ -105,6 +106,8 @@ if __name__ == "__main__":
     for i in range(degree+1):
         print("Please input share " + str(i+1) + ": ")
         shares.append(input())
-
+    t1 = time.time()
     secret = reconstruct_secret(shares, degree, field_base)
+    t2 = time.time()
     print("The secret is:", secret)
+    print("time:", t2-t1)
