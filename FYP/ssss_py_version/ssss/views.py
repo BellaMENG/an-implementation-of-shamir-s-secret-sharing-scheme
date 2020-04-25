@@ -1,10 +1,17 @@
 # print("You reached the test file.")
 
 from flask import Flask, render_template, request, jsonify
-from werkzeug.datastructures import ImmutableMultiDict
 from split import encrypt_string_str
 from interpolation import reconstruct_secret
 
+#TODO:
+'''
+1. check validity of inputs
+ 1.1 field_base/k/n should be integers
+ 1.2 secret should be a string
+ 1.3 number of shares while combining
+ 1.4 whether the shares format is legal
+'''
 
 app = Flask(__name__)
 
