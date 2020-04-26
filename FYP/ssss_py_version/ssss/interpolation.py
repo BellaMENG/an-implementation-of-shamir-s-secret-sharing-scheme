@@ -73,7 +73,7 @@ def lagrange_interpolation(points, field_base=8, x0=0):
 
         lagrange_polynomial = F.Multiply(numerator, F.Inverse(denominator))
         f_x = F.Add(f_x, F.Multiply(y_values[i], lagrange_polynomial))
-
+    print(f_x)
     return chr(f_x)
 
 

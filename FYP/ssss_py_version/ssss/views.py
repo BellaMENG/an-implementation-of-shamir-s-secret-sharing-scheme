@@ -1,8 +1,10 @@
 # print("You reached the test file.")
-
 from flask import Flask, render_template, request, jsonify
 from split import encrypt_string_str
 from interpolation import reconstruct_secret
+import sys
+sys.path.insert(1,"/Users/zmeng/Documents/FYP/ssss_py_version/ssss/cpp_code/build/lib.macosx-10.9-x86_64-3.8/")
+from fetch_data import fetch_shares
 
 #TODO:
 '''
@@ -38,7 +40,7 @@ def text_split():
     intercept = int(request.form.getlist('intercept')[0])
     degree = int(request.form.getlist('degree')[0]) - 1
     field_base = int(request.form.getlist('field_base')[0])
-    shares = encrypt_string_str(secret, intercept, degree, field_base)
+    shares = fetch_shares(secret, intercept, degree)
     return jsonify(shares)
 
 
@@ -50,6 +52,8 @@ def text_combine():
     secret = reconstruct_secret(shares, degree, field_base)
     print(secret)
     return jsonify(secret)
+
+
 
 
 if __name__ == "__main__":
