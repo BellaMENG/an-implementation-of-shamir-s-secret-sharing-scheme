@@ -4,7 +4,7 @@ from split import encrypt_string_str
 from interpolation import reconstruct_secret
 import sys
 sys.path.insert(1,"/Users/zmeng/Documents/FYP/ssss_py_version/ssss/cpp_code/build/lib.macosx-10.9-x86_64-3.8/")
-from fetch_data import fetch_shares
+from fetch_data import fetch_shares, fetch_secret
 
 #TODO:
 '''
@@ -50,6 +50,7 @@ def text_combine():
     field_base = int(request.form.getlist('field_base')[0])
     shares = request.form.getlist('shares')[0].split('\n')
     secret = reconstruct_secret(shares, degree, field_base)
+    # secret = fetch_secret(shares, degree)
     print(secret)
     return jsonify(secret)
 

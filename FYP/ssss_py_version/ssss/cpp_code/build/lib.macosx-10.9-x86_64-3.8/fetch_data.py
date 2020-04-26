@@ -14,3 +14,5 @@ def fetch_shares(secret, intercept, degree):
 def fetch_secret(shares, degree):
     secret = ssss.decrypt_str(shares, degree)
     return secret
+
+

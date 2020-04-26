@@ -2,6 +2,7 @@
 #include <boost/python/def.hpp>
 #include <boost/python/args.hpp>
 #include <boost/python/list.hpp>
+#include <boost/python/extract.hpp>
 #include <iostream>
 #include <string>
 #include "split_interpolation.hpp"
@@ -23,7 +24,7 @@ boost::python::list encrypt_str(std::string secret, int intercept, int degree) {
 string decrypt_str(boost::python::list shares, int degree) {
     string shares_arr[degree+1];
     for (int i = 0; i < degree+1; ++i)
-        shares_arr[i] = shares[i];
+        shares_arr[i] = boost::python::extract<std::string>(shares[i]);
     return reconstruct_secret(shares_arr, degree);
 }
 
