@@ -7,10 +7,11 @@
 
     {% if plot %}
     <!--<a href="{{ user_image }}" download>-->
-        <img src="{{ user_image }}" alt="User Image" width="193" height="130" >
+        <img src="{{ user_image }}" alt="User Image">
     <!--</a>-->
     {% endif %}
     {% endblock %}
+    <br /><br />
     <a href="{{ url_for('img_combine') }}">Go to combine!</a>
     </body>
 </html>
