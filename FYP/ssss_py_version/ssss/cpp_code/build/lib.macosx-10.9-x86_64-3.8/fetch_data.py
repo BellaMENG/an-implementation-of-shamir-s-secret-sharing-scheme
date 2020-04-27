@@ -11,6 +11,11 @@ def fetch_shares(secret, intercept, degree):
     return result
 
 
+def fetch_shares_arr(secret, intercept, degree):
+    shares = ssss.encrypt_str(secret, intercept, degree)
+    return shares
+
+
 def fetch_secret(shares, degree):
     secret = ssss.decrypt_str(shares, degree)
     return secret

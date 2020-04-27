@@ -1,0 +1,16 @@
+<html>
+    <body>
+    {% block body %}
+    <p>
+        You are here!
+    </p>
+
+    {% if plot %}
+    <!--<a href="{{ user_image }}" download>-->
+        <img src="{{ user_image }}" alt="User Image" width="193" height="130" >
+    <!--</a>-->
+    {% endif %}
+    {% endblock %}
+    <a href="{{ url_for('img_combine') }}">Go to combine!</a>
+    </body>
+</html>
