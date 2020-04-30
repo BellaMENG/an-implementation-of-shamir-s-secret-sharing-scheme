@@ -59,7 +59,7 @@ def img_split():
         img_share = save_str2file(shares[i],i)
         img_shares.append(img_share)
 
-    return render_template('img_partition.html', plot=True, user_image=file_path)
+    return jsonify(file_path)
 
 
 @app.route('/img_combine')
