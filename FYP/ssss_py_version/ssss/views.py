@@ -24,7 +24,7 @@ from fetch_data import fetch_shares, fetch_secret, fetch_shares_arr
 UPLOAD_FOLDER = os.path.join('static', 'secrets')
 SHARE_FOLDER = os.path.join('static', 'shares')
 COMBINE_FOLDER = os.path.join('static', 'combine')
-UPPER_BOUND = 2**8
+UPPER_BOUND = 2**16
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['SHARE_FOLDER'] = SHARE_FOLDER
@@ -127,7 +127,6 @@ def text_combine():
     degree = int(request.form.getlist('degree')[0]) - 1
     field_base = int(request.form.getlist('field_base')[0])
     shares = request.form.getlist('shares')[0].split('\n')
-    # secret = reconstruct_secret(shares, degree, field_base)
     secret = fetch_secret(shares, degree)
     print(secret)
     return jsonify(secret)
