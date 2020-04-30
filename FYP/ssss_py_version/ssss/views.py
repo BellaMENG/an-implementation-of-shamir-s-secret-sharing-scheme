@@ -132,6 +132,11 @@ def text_combine():
     return jsonify(secret)
 
 
+@app.route('/aud_secrets')
+def aud_secrets():
+    return render_template('aud_secrets.html')
+
+
 def image2str(filename):
     path = os.path.join(UPLOAD_FOLDER)
     with open(path+'/'+filename, "rb") as imageFile:
