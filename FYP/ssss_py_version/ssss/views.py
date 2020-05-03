@@ -40,6 +40,12 @@ def text_secrets():
     # print("in views.py text_secrets()")
     return render_template('text_secrets.html')
 
+
+@app.route('/c_text_secrets')
+def c_text_secrets():
+    return render_template('c_text_secrets.html')
+
+
 @app.route('/image_secrets')
 def image_secrets():
     return render_template('image_secrets.html')
@@ -137,10 +143,35 @@ def aud_secrets():
     return render_template('aud_secrets.html')
 
 
+@app.route('/aud_split', methods=['POST'])
+def aud_split():
+    file = request.files['file']
+    filename = secure_filename(file.filename)
+    file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    file.save(file_path)
+    secret = open_aud(file_path)
+    shares = fetch_shares(secret, 10, 2)
+    aud_shares = []
+    for i in range(len(shares)):
+        aud_share = save_str2file(shares[i], i)
+        aud_shares.append(aud_share)
+
+    return jsonify(aud_shares)
+
+
+
 def image2str(filename):
     path = os.path.join(UPLOAD_FOLDER)
     with open(path+'/'+filename, "rb") as imageFile:
         string = base64.b64encode(imageFile.read())
+        secret = string.decode("utf-8")
+        print(len(secret))
+        return secret
+
+
+def open_aud(fp):
+    with open(fp,"rb") as audfile:
+        string = base64.b64encode(audfile.read())
         secret = string.decode("utf-8")
         print(len(secret))
         return secret
