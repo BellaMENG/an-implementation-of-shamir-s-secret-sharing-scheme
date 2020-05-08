@@ -1,4 +1,6 @@
 import base64
+from views import read_img, resume_img
+import os
 from split import encrypt_string
 import time
 # plt.plot([1, 2, 3, 4])
@@ -27,6 +29,10 @@ def str2aud(string):
 
 
 if __name__ == "__main__":
-    string = open_aud("/Users/zmeng/Documents/FYP/ssss_py_version/ssss/static/secrets/2514.mp3")
-    str2aud(string)
+    # string = open_aud("/Users/zmeng/Documents/FYP/ssss_py_version/ssss/static/secrets/2514.mp3")
+    # str2aud(string)
+    fn = os.path.join('static', 'secrets')
+    fn = os.path.join(fn, 'fixative.png')
+    pixels = read_img(fn)
+    resume_img(pixels)
 

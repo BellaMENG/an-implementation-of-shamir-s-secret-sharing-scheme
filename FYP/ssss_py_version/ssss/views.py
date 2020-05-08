@@ -3,13 +3,12 @@ from utilitybelt import secure_randint as randint
 import os
 import base64
 from werkzeug.utils import secure_filename
+from PIL import Image
+import numpy as np
 import sys
 sys.path.insert(1,"/Users/zmeng/Documents/FYP/ssss_py_version/ssss/cpp_code/build/lib.macosx-10.9-x86_64-3.8/")
-from fetch_data import fetch_shares, fetch_secret, fetch_shares_arr
-# from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
-# import matplotlib.pyplot as plt
-# import io
-# from flask import send_file, send_from_directory, safe_join, abort
+from fetch_data import fetch_shares, fetch_shares_cheating, fetch_secret, fetch_shares_arr, fetch_secret_cheating, fetch_shares_px, fetch_secret_px
+
 
 #TODO:
 '''
@@ -24,11 +23,13 @@ from fetch_data import fetch_shares, fetch_secret, fetch_shares_arr
 UPLOAD_FOLDER = os.path.join('static', 'secrets')
 SHARE_FOLDER = os.path.join('static', 'shares')
 COMBINE_FOLDER = os.path.join('static', 'combine')
+IMG_FOLDER = os.path.join('static', 'img_shares')
 UPPER_BOUND = 2**16
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['SHARE_FOLDER'] = SHARE_FOLDER
 app.config['COMBINE_FOLDER'] = COMBINE_FOLDER
+app.config['IMG_FOLDER'] = IMG_FOLDER
 
 @app.route('/')
 def index():
@@ -64,6 +65,21 @@ def img_split():
     for i in range(len(shares)):
         img_share = save_str2file(shares[i],i)
         img_shares.append(img_share)
+
+    return jsonify(file_path)
+
+
+@app.route('/img_demo', methods=['POST'])
+def img_demo():
+    file = request.files['file']
+    filename = secure_filename(file.filename)
+    file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    file.save(file_path)
+    img_list = read_img(file_path)
+    shares = fetch_shares_px(img_list, 10, 2)
+    for i in range(len(shares)):
+        resume_img(shares[i], i)
+        print(shares[i][0], shares[i][1])
 
     return jsonify(file_path)
 
@@ -128,12 +144,30 @@ def text_split():
     return jsonify(shares)
 
 
+@app.route('/cheating_text_split', methods=['POST'])
+def c_text_split():
+    secret = request.form.getlist('secret')[0]
+    intercept = int(request.form.getlist('intercept')[0])
+    degree = int(request.form.getlist('degree')[0]) - 1
+    shares = fetch_shares_cheating(secret, intercept, degree)
+    return jsonify(shares)
+
+
 @app.route('/combine', methods=['POST'])
 def text_combine():
     degree = int(request.form.getlist('degree')[0]) - 1
     field_base = int(request.form.getlist('field_base')[0])
     shares = request.form.getlist('shares')[0].split('\n')
     secret = fetch_secret(shares, degree)
+    print(secret)
+    return jsonify(secret)
+
+
+@app.route('/cheating_text_combine', methods=['POST'])
+def c_text_combine():
+    degree = int(request.form.getlist('degree')[0]) - 1
+    shares = request.form.getlist('shares')[0].split('\n')
+    secret = fetch_secret_cheating(shares, degree)
     print(secret)
     return jsonify(secret)
 
@@ -157,6 +191,53 @@ def aud_split():
         aud_shares.append(aud_share)
 
     return jsonify(aud_shares)
+
+
+def read_img(fn):
+    my_img = Image.open(fn)
+    my_img_rgb = my_img.convert("RGB")
+    width = my_img.width
+    height = my_img.height
+    pixels = []
+    pixels.append(height)
+    pixels.append(width)
+    for i in range(height):
+        for j in range(width):
+            for pixel in my_img_rgb.getpixel((j, i)):
+                pixels.append(pixel)
+
+    print(len(pixels))
+    print(height*width*3)
+    return pixels
+
+
+def resume_img(pixels, idx):
+    secret = []
+    height = pixels[0]
+    width = pixels[1]
+    # print(height, width)
+    for i in range(height):
+        row = []
+        for j in range(width):
+            rgb = [-1, -1, -1]
+            row.append(rgb)
+        secret.append(row)
+
+    id = 2
+    for i in range(height):
+        for j in range(width):
+            rgb = []
+            for k in range(3):
+                rgb.append(pixels[id])
+                id += 1
+            rgb_tu = tuple(rgb)
+            secret[i][j] = rgb_tu
+
+    array = np.array(secret, dtype=np.uint8)
+    new_image = Image.fromarray(array)
+    file_path = os.path.join(IMG_FOLDER, str(idx)+".png")
+    new_image.save(file_path)
+    return file_path
 
 
 
