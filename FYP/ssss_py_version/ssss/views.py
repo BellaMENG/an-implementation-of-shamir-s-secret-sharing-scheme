@@ -26,10 +26,21 @@ COMBINE_FOLDER = os.path.join('static', 'combine')
 IMG_FOLDER = os.path.join('static', 'img_shares')
 UPPER_BOUND = 2**16
 app = Flask(__name__)
+app.config["CACHE_TYPE"] = "null"
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['SHARE_FOLDER'] = SHARE_FOLDER
 app.config['COMBINE_FOLDER'] = COMBINE_FOLDER
 app.config['IMG_FOLDER'] = IMG_FOLDER
+
+
+if app.config["DEBUG"]:
+    @app.after_request
+    def after_request(response):
+        response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate, public, max-age=0"
+        response.headers["Expires"] = 0
+        response.headers["Pragma"] = "no-cache"
+        return response
+
 
 @app.route('/')
 def index():
@@ -63,7 +74,7 @@ def img_split():
     print(len(shares))
     img_shares = []
     for i in range(len(shares)):
-        img_share = save_str2file(shares[i],i)
+        img_share = save_str2file(shares[i],i+10)
         img_shares.append(img_share)
 
     return jsonify(file_path)
@@ -77,60 +88,77 @@ def img_demo():
     file.save(file_path)
     img_list = read_img(file_path)
     shares = fetch_shares_px(img_list, 10, 2)
+    fps = []
     for i in range(len(shares)):
-        resume_img(shares[i], i)
-        print(shares[i][0], shares[i][1])
+        fp = resume_img(shares[i], i)
+        fps.append(fp)
 
-    return jsonify(file_path)
+    return jsonify(fps)
 
 
 @app.route('/img_combine')
 def img_combine():
-    path = os.path.join(SHARE_FOLDER)
-    fp0 = path+'/'+str(0)+".txt"
-    fp1 = path + '/' + str(1) + ".txt"
-    fp2 = path + '/' + str(2) + ".txt"
-    fp3 = path + '/' + str(3) + ".txt"
-    fp4 = path + '/' + str(4) + ".txt"
-    fp5 = path + '/' + str(5) + ".txt"
-    fp6 = path + '/' + str(6) + ".txt"
-    fp7 = path + '/' + str(7) + ".txt"
-    fp8 = path + '/' + str(8) + ".txt"
-    fp9 = path + '/' + str(9) + ".txt"
+    path = os.path.join(IMG_FOLDER)
+    fp0 = path+'/'+str(0)+".png"
+    fp1 = path + '/' + str(1) + ".png"
+    fp2 = path + '/' + str(2) + ".png"
+    fp3 = path + '/' + str(3) + ".png"
+    fp4 = path + '/' + str(4) + ".png"
+    fp5 = path + '/' + str(5) + ".png"
+    fp6 = path + '/' + str(6) + ".png"
+    fp7 = path + '/' + str(7) + ".png"
+    fp8 = path + '/' + str(8) + ".png"
+    fp9 = path + '/' + str(9) + ".png"
     return render_template('img_combine.html', fp0=fp0, fp1=fp1, fp2=fp2, fp3=fp3, fp4=fp4, fp5=fp5, fp6=fp6, fp7=fp7, fp8=fp8, fp9=fp9)
 
 
 @app.route('/img_combine_c', methods=['POST'])
 def combine_action():
+    x_values = []
     file = request.files['file0']
     filename = secure_filename(file.filename)
+    x_values.append(int(filename.split('.')[0]))
     fp0 = os.path.join(app.config['COMBINE_FOLDER'], filename)
     file.save(fp0)
+
     file = request.files['file1']
     filename = secure_filename(file.filename)
+    x_values.append(int(filename.split('.')[0]))
     fp1 = os.path.join(app.config['COMBINE_FOLDER'], filename)
     file.save(fp1)
+
     file = request.files['file2']
     filename = secure_filename(file.filename)
+    x_values.append(int(filename.split('.')[0]))
     fp2 = os.path.join(app.config['COMBINE_FOLDER'], filename)
     file.save(fp2)
-    print(filename)
-    shares = []
-    shares.append(read_file(fp0))
-    shares.append(read_file(fp1))
-    shares.append(read_file(fp2))
+    print(x_values)
+    y_values = []
+    y_values.append(read_img(fp0))
+    y_values.append(read_img(fp1))
+    y_values.append(read_img(fp2))
 
-    secret = fetch_secret(shares, 2)
+    pixel_list = fetch_secret_px(x_values, y_values, 2)
     random_int = randint(1, UPPER_BOUND)
-    fp = os.path.join(app.config['COMBINE_FOLDER'], str(random_int) + ".jpg")
-    if os.path.exists(fp):
-        os.remove(fp)
-        random_int = randint(1, UPPER_BOUND)
-        fp = os.path.join(app.config['COMBINE_FOLDER'], str(random_int) + ".jpg")
-    fh = open(fp, "wb")
-    fh.write(base64.b64decode(secret))
-    fh.close()
-    print(fp)
+    fp = resume_img_secret(pixel_list, random_int)
+
+    # shares = []
+    # shares.append(read_file(fp0))
+    # shares.append(read_file(fp1))
+    # shares.append(read_file(fp2))
+    #
+    # secret = fetch_secret(shares, 2)
+    # random_int = randint(1, UPPER_BOUND)
+    # fp = os.path.join(app.config['COMBINE_FOLDER'], str(random_int) + ".jpg")
+    # if os.path.exists(fp):
+    #     os.remove(fp)
+    #     random_int = randint(1, UPPER_BOUND)
+    #     fp = os.path.join(app.config['COMBINE_FOLDER'], str(random_int) + ".jpg")
+    # fh = open(fp, "wb")
+    # fh.write(base64.b64decode(secret))
+    # fh.close()
+    # print(fp)
+    # return jsonify(fp)
     return jsonify(fp)
 
 
@@ -179,18 +207,18 @@ def aud_secrets():
 
 @app.route('/aud_split', methods=['POST'])
 def aud_split():
-    file = request.files['file']
-    filename = secure_filename(file.filename)
-    file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-    file.save(file_path)
-    secret = open_aud(file_path)
-    shares = fetch_shares(secret, 10, 2)
-    aud_shares = []
-    for i in range(len(shares)):
-        aud_share = save_str2file(shares[i], i)
-        aud_shares.append(aud_share)
+    # file = request.files['file']
+    # filename = secure_filename(file.filename)
+    # file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    # file.save(file_path)
+    # secret = open_aud(file_path)
+    # shares = fetch_shares(secret, 10, 2)
+    # aud_shares = []
+    # for i in range(len(shares)):
+    #     aud_share = save_str2file(shares[i], i)
+    #     aud_shares.append(aud_share)
 
-    return jsonify(aud_shares)
+    return
 
 
 def read_img(fn):
@@ -206,8 +234,6 @@ def read_img(fn):
             for pixel in my_img_rgb.getpixel((j, i)):
                 pixels.append(pixel)
 
-    print(len(pixels))
-    print(height*width*3)
     return pixels
 
 
@@ -236,6 +262,35 @@ def resume_img(pixels, idx):
     array = np.array(secret, dtype=np.uint8)
     new_image = Image.fromarray(array)
     file_path = os.path.join(IMG_FOLDER, str(idx)+".png")
+    new_image.save(file_path)
+    return file_path
+
+
+def resume_img_secret(pixels, idx):
+    secret = []
+    height = pixels[0]
+    width = pixels[1]
+    # print(height, width)
+    for i in range(height):
+        row = []
+        for j in range(width):
+            rgb = [-1, -1, -1]
+            row.append(rgb)
+        secret.append(row)
+
+    id = 2
+    for i in range(height):
+        for j in range(width):
+            rgb = []
+            for k in range(3):
+                rgb.append(pixels[id])
+                id += 1
+            rgb_tu = tuple(rgb)
+            secret[i][j] = rgb_tu
+
+    array = np.array(secret, dtype=np.uint8)
+    new_image = Image.fromarray(array)
+    file_path = os.path.join(COMBINE_FOLDER, str(idx)+".png")
     new_image.save(file_path)
     return file_path
 

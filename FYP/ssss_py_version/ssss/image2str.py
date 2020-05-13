@@ -22,7 +22,8 @@ def open_aud(file_name):
 
 
 def str2aud(string):
-    fh = open("/Users/zmeng/Documents/FYP/ssss_py_version/ssss/static/combine" + "/aud.mp3", "wb")
+    fh = open("/Users/zmeng/Documents/FYP/ssss_py_version/ssss/static/combine" + "/"
+                                                                                 "aud.mp3", "wb")
     fh.write(base64.b64decode(string))
     fh.close()
     return fh
@@ -32,7 +33,7 @@ if __name__ == "__main__":
     # string = open_aud("/Users/zmeng/Documents/FYP/ssss_py_version/ssss/static/secrets/2514.mp3")
     # str2aud(string)
     fn = os.path.join('static', 'secrets')
-    fn = os.path.join(fn, 'fixative.png')
+    fn = os.path.join(fn, '0.png')
     pixels = read_img(fn)
     resume_img(pixels)
 
