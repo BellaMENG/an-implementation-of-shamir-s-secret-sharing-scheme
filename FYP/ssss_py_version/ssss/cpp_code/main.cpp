@@ -85,7 +85,8 @@ void test_copy(string share) {
 }
 
 int main() {
-	string secret = "secretttttsecretttttsecretttttsecretttttsecretttttsecretttttsecretttttsecretttttsecretttttsecrettttt";
+	cout << "-------- Text secret --------" << endl;
+	string secret = "secret";
 	int intercept = 10;
 	int degree = 2;
 
@@ -107,14 +108,50 @@ int main() {
 	string new_secret = reconstruct_secret(new_shares, degree);
 	t2 = clock();
 	cout << "time: " << float(t2-t1)/CLOCKS_PER_SEC << endl;
-	cout << new_secret << endl;
+	cout << "secret is: " << new_secret << endl;
 
-//	string shares[] = {"01-cceb838f749d", "02-63427d2950bf", "05-3d3d94f34206"};
-//	test_get_points(shares, degree);
-//	test_interpolation(shares, degree);
+	cout << endl;
+	cout << "-------- Vector secret --------" << endl;
+	//void encrypt_pic(vector<vector<int>>& shares, vector<int>& pixels, int intercept, int degree)
 
-//	test_random_coeff(degree);
-//	test_copy(secret);
+	vector<vector<int>> px_shares;
+	static const int arr[] = {244, 19, 37, 255, 8, 244, 19, 37, 255, 8};
+	vector<int> pxs (arr, arr+sizeof(arr)/sizeof(arr[0]));
+	encrypt_pic(px_shares, pxs, 10, 2);
+
+	for (int i = 0; i < intercept; ++i) {
+		for (int j = 0; j < pxs.size(); ++j) {
+			cout << px_shares[i][j] << " ";
+		}
+		cout << endl;
+	}
+	cout << endl;
+
+	cout << "-------- Test Reconstruct --------" << endl;
+	vector<vector<int>> xy_values;
+	static const int xs[] = {1,2,3};
+	vector<int> xs_vect (xs, xs+sizeof(xs)/sizeof(xs[0]));
+	vector<vector<int>> y_values;
+	for (int i = 0; i <= 2; ++i) {
+		y_values.push_back(px_shares[i]);
+	}
+
+//	get_int_points(xy_values, xs_vect, y_values, 2);
+//
+//	for (int i = 0; i < xy_values.size(); ++i) {
+//		for (int j = 0; j < degree+1; ++j) {
+//			cout << xy_values[i][j] << " ";
+//		}
+//		cout << endl;
+//	}
+//	cout << endl;
+
+	vector<int> px_secret;
+	reconstruct_vect(px_secret, xs_vect, y_values, 2);
+	for (int i = 0; i < px_secret.size(); ++i) {
+		cout << px_secret[i] << " ";
+	}
+	cout << endl;
 
 
 	return 0;
